@@ -1,48 +1,56 @@
-"use client"
+//"use client"
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import AnimatedGrid from "../components/AnimatedGrid";
+import { cookies as c } from "next/headers";
 
-export default function Home() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+import { cookies, robloxStatusCheck } from "@/api";
+import GlowingDotWithTooltip from "../components/Dot";
+import { formatDateWithTimezone, joinWithAnd } from "@/idk";
+import { HyperText } from "@/components/ui/hyper-text";
 
-  const content = [
-    "bg1.png",
-    "bg2.png",
-    "bg3.png",
-  ];
+export default async function Home() {
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === content.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 500);
-
-    return () => clearInterval(timer);
-  }, []);
+  const session = await cookies(await c());
+  const status = await robloxStatusCheck()
+  //console.log(status)
 
   return (
-    <div
-      className="fixed bg-[#101010] h-svh w-screen overflow-hidden bg-repeat"
-      style={{
-        backgroundImage: `url(${content[currentIndex]})`
-      }}
-    >
-      <div className="p-5 container overflow-hidden text-white">
-        <div>
-          <h1 className="text-4xl inline-flex justify-between items-baseline gap-4">
-            {/*<Image src={icon} width={40} height={40} />*/}
-            spawnpoint
-          </h1>
+    <>
+      <div className="fixed bg-[#101010] h-svh w-screen overflow-hidden -z-[1]">
+        {/*<AnimatedGrid gridSize={200} animationDuration={5} />*/}
+        <AnimatedGrid />
+      </div>
+      <div
+        className=" h-svh w-screen overflow-hidden bg-repeat"
+      >
+        <div className="p-5 container overflow-hidden text-white">
+          <div className="inline-flex justify-center items-center gap-4">
+            <HyperText className="text-4xl ">
+              {/*<Image src={icon} width={40} height={40} />*/}
+              spawnpoint
+            </HyperText>
+            <Link href="https://status.roblox.com/">
+              {status === true ? (
+                <GlowingDotWithTooltip tooltipText="Roblox's systems seem to be ok" />
+              ) : (<GlowingDotWithTooltip variant="error" tooltipText={`Currently ${joinWithAnd(status?.components!)} are experiencing issues since ${formatDateWithTimezone(new Date(status?.date))}`} />)}
+            </Link>
+          </div>
           <h2>
             a new way to manage your game's data
           </h2>
-        </div>
-        <div className="absolute top-0 right-0 p-10">
-          <Link href="/login">
-            <button className="outline outline-offset-[9px] outline-[#242424] bg-[#101010] rounded-lg">Login with Roblox</button></Link>
+          <div className="absolute top-0 right-0 p-10">
+            {session.id ? (
+              <Link href="/dashboard">
+                <button className="outline outline-offset-[9px] outline-[#242424] bg-[#101010] rounded-lg">Dashboard</button>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <button className="outline outline-offset-[9px] outline-[#242424] bg-[#101010] rounded-lg">Login with Roblox</button>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

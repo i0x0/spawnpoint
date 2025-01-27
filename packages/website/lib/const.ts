@@ -49,6 +49,6 @@ export const ROBLOX = {
 	]
 }
 
-export const SCOPES = "openid profile universe:write legacy-universe:manage"
+export const SCOPES = "openid profile group:read legacy-group:manage user.social:read universe:write legacy-universe:manage"
 
 export const COOKIE = "idk_tbh"

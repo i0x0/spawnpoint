@@ -1,9 +1,7 @@
-import { cookies as c } from "next/headers";
-
-import { cookies } from "@/api";
-
-export default async function Profile() {
-	const session = await cookies(await c());
-
-	return <div>{JSON.stringify(session)}</div>;
+export default function DashboardPage() {
+	return (
+		<div className="container p-4">
+			<h1 className="text-2xl font-medium">Dashboard</h1>
+		</div>
+	)
 }
