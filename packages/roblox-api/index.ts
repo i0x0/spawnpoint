@@ -1,9 +1,7 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import Auth from './auth';
-import safeAwait from 'safe-await';
-import jwt from 'jsonwebtoken';
 import User from './user';
-import { ROBLOX, SCOPES } from '../website/lib/const';
+import { SCOPES } from '../website/lib/const';
 import { Issuer, TokenSet, custom } from 'openid-client';
 import prisma, { Prisma } from 'etc/prisma';
 import Universe from './universe';
@@ -11,7 +9,7 @@ import Etc from './etc';
 import Thumbnail from './thumbnail';
 
 
-interface RobloxApiOptions {
+export interface RobloxApiOptions {
 	clientId: string;
 	clientSecret: string;
 	baseUrl?: string;
@@ -51,7 +49,8 @@ export class RobloxApi {
 				data: value as Prisma.JsonObject
 			}
 		}).catch(console.error).then(() => {
-			console.log("Tokens updated:", value?.access_token);
+			console.log("updated");
+			//console.log("Tokens updated:", value?.access_token);
 			this._tokens = value;
 		});
 	}
@@ -72,13 +71,11 @@ export class RobloxApi {
 		// Add request interceptor for token management
 		this.axiosInstance.interceptors.request.use(
 			async (config) => {
-				await this.ensureValidToken();
-
-				if (!this.tokens?.expired()) {
-					config.headers.Authorization = `Bearer ${this.tokens?.access_token}`;
-					//this.tokens.
-					//config.headers['x-api-key'] = `${this.tokens?.access_token}`;
-				}
+				this.ensureValidToken().then(() => {
+					if (this.tokens && !this.tokens.expired()) {
+						config.headers.Authorization = `Bearer ${this.tokens.access_token}`;
+					}
+				})
 
 				return config;
 			},
@@ -100,8 +97,12 @@ export class RobloxApi {
 
 	async ensureValidToken() {
 		try {
-			// Return early if tokens are still valid
-			if (this.tokens && !this.tokens.expired()) {
+			// Add buffer time to check expiration (e.g., 60 seconds before actual expiration)
+			const EXPIRATION_BUFFER = 60;
+
+			if (this.tokens &&
+				this.tokens.expires_at &&
+				this.tokens.expires_at > (Date.now() / 1000) + EXPIRATION_BUFFER) {
 				return;
 			}
 
@@ -121,6 +122,12 @@ export class RobloxApi {
 			try {
 				const newTokens = await this.refreshPromise;
 				this.tokens = newTokens;
+			} catch (error) {
+				console.log(error)
+				console.error('Token refresh failed:', error);
+				// Clear tokens if refresh fails
+				this.tokens = null;
+				throw error;
 			} finally {
 				this.refreshPromise = null;
 			}

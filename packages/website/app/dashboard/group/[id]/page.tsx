@@ -1,4 +1,5 @@
 import { authRequired } from "@/api"
+import Image from "next/image"
 import Link from "next/link"
 import { RobloxUser } from "roblox-api/etc"
 import safeAwait from "safe-await"
@@ -22,10 +23,14 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
 			<div className="container p-4">
 				<div className="flex gap-4">
 					{resources ? (
-						<img
+						<Image
 							src={resources.data[0].imageUrl}
 							alt="User thumbnail"
 							className="w-32 h-32 rounded-lg"
+							width={128}
+							height={128}
+							priority
+							unoptimized
 						/>
 					) : (
 						<div className="w-32 h-32 rounded-lg bg-neutral-800 animate-pulse" />
@@ -69,10 +74,14 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
 		<div className="container p-4">
 			<div className="flex gap-4">
 				{resources ? (
-					<img
+					<Image
 						src={resources.data[0].imageUrl}
 						alt="Group thumbnail"
 						className="w-32 h-32 rounded-lg"
+						width={128}
+						height={128}
+						priority
+						unoptimized
 					/>
 				) : (
 					<div className="w-32 h-32 rounded-lg bg-neutral-800 animate-pulse" />

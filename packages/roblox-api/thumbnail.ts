@@ -41,4 +41,14 @@ export default class Thumbnail extends Prototype {
 			}
 		})
 	}
+
+	public async place(id: string[]) {
+		return await this.root.request<RobloxThumbnail>("GET", `${this.url}/v1/places/gameicons`, {
+			params: {
+				format: "png",
+				size: "420x420",
+				placeIds: id,
+			}
+		})
+	}
 }

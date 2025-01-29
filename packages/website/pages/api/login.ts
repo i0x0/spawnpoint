@@ -49,7 +49,6 @@ export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse
 ) {
-
 	const session = await cookiesAPI(req, res)
 	const state = generators.state();
 	const nonce = generators.nonce();

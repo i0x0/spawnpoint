@@ -5,6 +5,7 @@ import { authRequired } from '@/api';
 import DropdownMenu, { MenuItem } from '../../components/DropdownMenu';
 import Link from 'next/link';
 import { HyperText } from '@/components/ui/hyper-text';
+import Image from 'next/image';
 
 export default async function BlogLayout({
 	children,
@@ -34,7 +35,7 @@ export default async function BlogLayout({
 						label: group.displayName,
 						href: `/dashboard/group/${group.id}`,
 						icon: thumbnail?.data[0] ? (
-							<img src={thumbnail.data[0].imageUrl} alt={group.displayName} className="w-4 h-4 rounded-full" />
+							<Image src={thumbnail.data[0].imageUrl} alt={group.displayName} className="w-4 h-4 rounded-full" priority={true} width={10} height={10} unoptimized />
 						) : undefined,
 					})
 				}
@@ -53,7 +54,7 @@ export default async function BlogLayout({
 						label: `${user.displayName}'s Group`,
 						href: `/dashboard/group/p-${user.id}`,
 						icon: thumbnail?.data[0] ? (
-							<img src={thumbnail.data[0].imageUrl} alt={user.displayName} className="w-4 h-4 rounded-full" />
+							<Image src={thumbnail.data[0].imageUrl} alt={user.displayName} className="w-4 h-4 rounded-full" priority={true} width={10} height={10} unoptimized />
 						) : undefined,
 					})
 				}
@@ -81,10 +82,14 @@ export default async function BlogLayout({
 
 							<div className="flex items-center gap-3">
 								{user?.picture && (
-									<img
+									<Image
 										src={user.picture}
 										alt={user?.name || 'Profile'}
 										className="w-10 h-10 rounded-full bg-[#d4d4d4]"
+										width={10}
+										height={10}
+										priority={true}
+										unoptimized
 									/>
 								)}
 								<h2 className="text-xl font-semibold text-white">{user?.name}</h2>

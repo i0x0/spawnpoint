@@ -98,6 +98,7 @@ export const robloxStatusCheck = async () => {
 }
 
 export const authRequired = async () => {
+	console.log("authRequired, cachedApi: ", cachedApi)
 	if (cachedApi) {
 		return cachedApi;
 	}
@@ -107,6 +108,7 @@ export const authRequired = async () => {
 	}
 	const [e_, session] = await safeAwait(cookies(_cookies))
 	if (e_) {
+		console.log("uhh")
 		// still dont know 
 	}
 

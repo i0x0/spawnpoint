@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
+import createMDX from '@next/mdx';
+
+const withMDX = createMDX({
+  options: {
+
+  },
+});
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   async redirects() {
     return [
       {
@@ -21,4 +28,4 @@ const nextConfig: NextConfig = {
   }
 };
 
-export default nextConfig;
+export default withMDX(nextConfig);

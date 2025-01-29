@@ -9,7 +9,6 @@ import { formatDateWithTimezone, joinWithAnd } from "@/idk";
 import { HyperText } from "@/components/ui/hyper-text";
 
 export default async function Home() {
-
   const session = await cookies(await c());
   const status = await robloxStatusCheck()
   //console.log(status)
@@ -31,8 +30,15 @@ export default async function Home() {
             </HyperText>
             <Link href="https://status.roblox.com/">
               {status === true ? (
-                <GlowingDotWithTooltip tooltipText="Roblox's systems seem to be ok" />
-              ) : (<GlowingDotWithTooltip variant="error" tooltipText={`Currently ${joinWithAnd(status?.components!)} are experiencing issues since ${formatDateWithTimezone(new Date(status?.date))}`} />)}
+                <GlowingDotWithTooltip
+                  tooltipText="Roblox's systems seem to be ok"
+                />
+              ) : (
+                <GlowingDotWithTooltip
+                  variant="error"
+                  tooltipText={`Currently ${joinWithAnd(status?.components as string[])} are experiencing issues since ${formatDateWithTimezone(new Date(status?.date as string))}`}
+                />
+              )}
             </Link>
           </div>
           <h2>
