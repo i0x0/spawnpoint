@@ -19,5 +19,7 @@ export const formatDateWithTimezone = (date: Date) => {
 		timeZoneName: 'short'
 	};
 
-	return date.toLocaleString('en-US', options);
+	return date.toLocaleString('en-US', options as unknown as Intl.DateTimeFormatOptions);
 };
+
+export const timestamp = () => Math.floor(Date.now() / 1000);

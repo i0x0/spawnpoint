@@ -1,10 +1,10 @@
 //"use client"
 import Link from "next/link";
-import AnimatedGrid from "../components/AnimatedGrid";
+import AnimatedGrid from "@/components/AnimatedGrid";
 import { cookies as c } from "next/headers";
 
 import { cookies, robloxStatusCheck } from "@/api";
-import GlowingDotWithTooltip from "../components/Dot";
+import GlowingDotWithTooltip from "@/components/Dot";
 import { formatDateWithTimezone, joinWithAnd } from "@/idk";
 import { HyperText } from "@/components/ui/hyper-text";
 
@@ -54,6 +54,11 @@ export default async function Home() {
                 <button className="outline outline-offset-[9px] outline-[#242424] bg-[#101010] rounded-lg">Login with Roblox</button>
               </Link>
             )}
+          </div>
+          <div className="fixed bottom-10 left-0 right-0 hidden mx-auto w-fit sm:flex items-center">
+            <Link href="https://i0x0.wtf">
+              made by i0x0
+            </Link>
           </div>
         </div>
       </div>

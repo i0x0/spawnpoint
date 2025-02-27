@@ -1,7 +1,8 @@
-import { authRequired } from "@/api"
+import { authRequired, restartUniverse } from "@/api"
 import safeAwait from "safe-await"
 import Image from 'next/image';
-import { RobloxThumbnail } from "roblox-api/thumbnail";
+import { RobloxThumbnail } from "@/lib/roblox-api/thumbnail";
+import { useCallback } from "react";
 
 export default async function UniversePage({ params }: { params: { uni: string } }) {
 	const { uni } = await params
@@ -9,30 +10,49 @@ export default async function UniversePage({ params }: { params: { uni: string }
 	const [, universe] = await safeAwait(api.universe.get(uni))
 	const [, thumbnail] = await safeAwait(api.thumbnail.universe(uni))
 	const [, places] = await safeAwait(api.universe.places(uni))
-	let thumbnails_: RobloxThumbnail
+	let thumbnails_: RobloxThumbnail | undefined
 	if (places) {
 		const [, thumbnails] = await safeAwait(api.thumbnail.place(places.data.map((place) => String(place.id))))
-		console.log(thumbnails)
+		//console.log(thumbnails)
 		thumbnails_ = thumbnails
 	}
 
-	const restartUniverse = async () => {
-		await api.universe.restart(uni)
-	}
-	console.log(places)
+	const restart = useCallback(async () => {
+		const api = await authRequired()
+	}, [])
+
+	//console.log(places)
 	return (
 		<>
 			<div className="container p-4">
 				<div className="flex items-center gap-4">
-					{thumbnail?.data[0].imageUrl ? (
-						<Image src={thumbnail.data[0].imageUrl} alt={universe?.displayName} width={128} height={128} className="rounded-lg" priority unoptimized />
+					{thumbnail?.data[0]?.imageUrl ? (
+						<Image src={thumbnail.data[0].imageUrl} alt={universe?.displayName || ''} width={128} height={128} className="rounded-lg" priority unoptimized />
 					) : (
 						<div className="w-32 h-32 rounded-lg bg-gray-200 animate-pulse" />
 					)}
 					<div>
 						<h1 className="text-2xl font-medium">{universe?.displayName}</h1>
 						<p className="text-gray-400">{universe?.description}</p>
-						<button className="text-white bg-green-700 px-4 py-2 rounded text-left" onClick={restartUniverse}>Restart Universe</button>
+						{/*<Restart uni={uni} />*/}
+
+						<button className="text-white bg-green-700 px-4 py-2 rounded text-left" onClick={async () => {
+							"use server";
+							console.log("i", uni)
+							const api = await authRequired()
+
+							//restartUniverse(uni)
+							api.universe.restart(uni).then((res) => {
+								if (res.status === 200) {
+									console.log("Restarted universe")
+									//window.location.reload()
+								}
+							}).catch((err) => {
+								console.log("Error restarting universe", err)
+								//router.push(`/dashboard/group/${groupId}/universe/${uni}`)
+							})
+						}}>Restart Universe</button>
+
 					</div>
 					<div>
 					</div>

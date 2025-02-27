@@ -24,9 +24,9 @@ export default function App({ Component, pageProps }: AppProps) {
 						</Link>
 					</div>
 				</div>
-				<div className="container">
-					<div className="flex text-white items-center justify-center w-screen">
-						<div className="bg-[#101010] p-10 rounded-lg backdrop-blur-sm w-full max-w-[70%] mx-auto">
+				<div className="">
+					<div className="flex text-white items-center justify-center ">
+						<div className="bg-[#101010] p-10 rounded-lg backdrop-blur-sm w-full max-w-[50%] mx-auto">
 							<article className="h-full flex items-center">
 								<div className='prose prose-invert max-w-full'>
 									<Component {...pageProps} />

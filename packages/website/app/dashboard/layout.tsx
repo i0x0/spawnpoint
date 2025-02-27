@@ -1,8 +1,8 @@
 import safeAwait from 'safe-await';
-import AnimatedGrid from '../../components/AnimatedGrid';
+import AnimatedGrid from '@/components/AnimatedGrid';
 import { authRequired } from '@/api';
 //import { useRouter } from 'next/navigation';
-import DropdownMenu, { MenuItem } from '../../components/DropdownMenu';
+import DropdownMenu, { MenuItem } from '@/components/DropdownMenu';
 import Link from 'next/link';
 import { HyperText } from '@/components/ui/hyper-text';
 import Image from 'next/image';
@@ -14,7 +14,11 @@ export default async function BlogLayout({
 }) {
 	const api = await authRequired()
 	const [, user] = await safeAwait(api.user.self())
-	const [, _resources] = await safeAwait(api.auth.resources())
+	const [err, _resources] = await safeAwait(api.auth.resources())
+	if (err) {
+		console.log("err5", err)
+		//console.error(err)
+	}
 	let ready = false
 	const resources: MenuItem[] = []
 	if (_resources !== undefined) {

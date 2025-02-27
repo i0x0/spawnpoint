@@ -1,5 +1,5 @@
 import Prototype from "./prototype";
-import { RobloxAuthIntrospect, RobloxAuthRefresh } from "./types";
+import { RobloxAuthIntrospect } from "./types";
 import qs from 'qs';
 import safeAwait from 'safe-await';
 

@@ -1,15 +1,14 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import Auth from './auth';
 import User from './user';
-import { SCOPES } from '../website/lib/const';
-import { Issuer, TokenSet, custom } from 'openid-client';
 import prisma, { Prisma } from 'etc/prisma';
 import Universe from './universe';
 import Etc from './etc';
-import Thumbnail from './thumbnail';
+import Thumbnail from './thumbnail'
+import { custom, Issuer, TokenSet } from 'openid-client';
+import { SCOPES } from '@/const';
 
-
-export interface RobloxApiOptions {
+export type RobloxApiOptions = {
 	clientId: string;
 	clientSecret: string;
 	baseUrl?: string;
@@ -23,7 +22,6 @@ export interface TokenResponse {
 	scope: string;
 	[key: string]: string | number;
 }
-
 
 class RobloxApiError extends Error {
 	constructor(message: string) {
@@ -49,7 +47,6 @@ export class RobloxApi {
 				data: value as Prisma.JsonObject
 			}
 		}).catch(console.error).then(() => {
-			console.log("updated");
 			//console.log("Tokens updated:", value?.access_token);
 			this._tokens = value;
 		});
@@ -69,21 +66,6 @@ export class RobloxApi {
 		});
 
 		// Add request interceptor for token management
-		this.axiosInstance.interceptors.request.use(
-			async (config) => {
-				this.ensureValidToken().then(() => {
-					if (this.tokens && !this.tokens.expired()) {
-						config.headers.Authorization = `Bearer ${this.tokens.access_token}`;
-					}
-				})
-
-				return config;
-			},
-			(error) => {
-				console.log(error)
-				Promise.reject(error)
-			}
-		);
 		this.auth = new Auth(this)
 		this.user = new User(this)
 		this.universe = new Universe(this)
@@ -91,18 +73,29 @@ export class RobloxApi {
 		this.thumbnail = new Thumbnail(this)
 		this.tokens = new TokenSet(this.options.token)
 		// prob old tokens
-		//this.ensureValidToken()
+		this.axiosInstance.interceptors.request.use(
+			(config) => {
+				this.ensureValidToken().then(() => {
+					config.headers.Authorization = `Bearer ${this.tokens?.access_token}`;
+				})
+				return config;
+			},
+			(error) => {
+				console.log("token interceptor error")
+				console.log(error)
+				Promise.reject(error)
+			}, {
+			synchronous: false
+		}
+		);
+		this.ensureValidToken()
 		//this.auth.refresh()
 	}
 
 	async ensureValidToken() {
 		try {
-			// Add buffer time to check expiration (e.g., 60 seconds before actual expiration)
-			const EXPIRATION_BUFFER = 60;
-
-			if (this.tokens &&
-				this.tokens.expires_at &&
-				this.tokens.expires_at > (Date.now() / 1000) + EXPIRATION_BUFFER) {
+			// Return early if tokens are still valid
+			if (this.tokens && !this.tokens.expired()) {
 				return;
 			}
 
@@ -122,12 +115,6 @@ export class RobloxApi {
 			try {
 				const newTokens = await this.refreshPromise;
 				this.tokens = newTokens;
-			} catch (error) {
-				console.log(error)
-				console.error('Token refresh failed:', error);
-				// Clear tokens if refresh fails
-				this.tokens = null;
-				throw error;
 			} finally {
 				this.refreshPromise = null;
 			}
@@ -141,27 +128,30 @@ export class RobloxApi {
 	public async request<T>(
 		method: 'GET' | 'POST' | 'PUT' | 'DELETE',
 		endpoint: string,
-		data?: AxiosRequestConfig<unknown>
+		data?: Partial<AxiosRequestConfig>,
+		i: number = 0
 	): Promise<T> {
 		try {
-			const response = await this.axiosInstance.request<T>({
+			const config: AxiosRequestConfig = {
 				method,
 				url: endpoint,
-				//data: data
 				...data
-			});
+			};
+
+			const response = await this.axiosInstance.request<T>(config);
 			return response.data;
 		} catch (error) {
+			console.log("error3", error)
 			console.log(2)
 			const errors = error as Error | AxiosError;
 			if (!axios.isAxiosError(errors)) {
 				console.log(1)
-				//console.log(errors.cause)
+				console.log("cause", errors)
 				//console.log(errors.rq)
 				// do whatever you want with native error
 			} else {
 				console.log(3)
-				//console.log(errors.response)
+				//console.log("response", errors.response)
 				console.log('status: ', errors.response?.statusText)
 				console.log(errors.response?.status)
 				//console.log(errors.request.)
@@ -169,10 +159,18 @@ export class RobloxApi {
 					if (errors.response.data.error) {
 						console.log("err_text: ", errors.response.data.error)
 						console.log("err_desc: ", errors.response.data.error_description)
+						if (errors.response?.status === 401 && errors.response.data.error === "invalid_token") {
+							if (i >= 5) {
+								console.log("invalid token, too many retries")
+								throw new RobloxApiError(`Request failed: ${endpoint}`);
+							}
+							console.log("invalid token trying again")
+							return await this.request<T>(method, endpoint, data, i + 1)
+						}
 					}
 					console.log("request url:", errors.config?.url)
 				}
-				//console.log(errors.response)
+				console.log(errors.response)
 			}
 			//console.log(error)
 			throw new RobloxApiError(`Request failed: ${endpoint}`);

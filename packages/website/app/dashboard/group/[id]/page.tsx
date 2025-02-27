@@ -1,7 +1,7 @@
 import { authRequired } from "@/api"
 import Image from "next/image"
 import Link from "next/link"
-import { RobloxUser } from "roblox-api/etc"
+import { RobloxUser } from "@/lib/roblox-api/etc"
 import safeAwait from "safe-await"
 
 
@@ -97,7 +97,12 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
 							</Link>
 						) : null}
 					</h1>
-					<p className="text-gray-400">{group?.description}</p>
+					<p className="text-gray-400">{group?.description?.split('\n').map((line, i) => (
+						<span key={i}>
+							{line}
+							<br />
+						</span>
+					))}</p>
 					<p className="text-gray-400"></p>
 				</div>
 			</div>

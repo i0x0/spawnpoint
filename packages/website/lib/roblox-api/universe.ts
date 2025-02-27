@@ -67,7 +67,7 @@ export default class Universe extends Prototype {
 	}
 
 	public async restart(id: string) {
-		return await this.root.request<{}>("POST", `/cloud/v2/universes/${id}:restartServers`)
+		return await this.root.request("POST", `/cloud/v2/universes/${id}:restartServers`)
 	}
 
 	public async places(id: string) {
