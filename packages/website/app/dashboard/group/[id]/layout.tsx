@@ -1,4 +1,4 @@
-import { authRequired } from "@/api"
+import { authRequired } from "@/auth"
 import safeAwait from "safe-await"
 import DropdownMenu, { MenuItem } from "@/components/DropdownMenu"
 import _ from "lodash"

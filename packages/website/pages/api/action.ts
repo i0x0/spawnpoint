@@ -1,15 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { authRequired } from "@/api"
+import { Action, authRequiredApi } from "@/api_"
 
-export const enum Action {
-	RESTART_UNIVERSE
-}
 
 export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse
 ) {
-	const api = await authRequired()
+	const api = await authRequiredApi(req, res)
 	const perms = await api.auth.resources()
 	switch (req.body.action) {
 		case Action.RESTART_UNIVERSE:

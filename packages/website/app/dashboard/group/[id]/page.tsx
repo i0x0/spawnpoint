@@ -1,4 +1,4 @@
-import { authRequired } from "@/api"
+import { authRequired } from "@/auth"
 import Image from "next/image"
 import Link from "next/link"
 import { RobloxUser } from "@/lib/roblox-api/etc"

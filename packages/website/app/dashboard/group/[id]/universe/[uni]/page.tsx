@@ -1,8 +1,9 @@
-import { authRequired, restartUniverse } from "@/api"
+import { authRequired } from "@/auth"
 import safeAwait from "safe-await"
 import Image from 'next/image';
 import { RobloxThumbnail } from "@/lib/roblox-api/thumbnail";
-import { useCallback } from "react";
+import Restart from "./Restart";
+//import { useCallback } from "react";
 
 export default async function UniversePage({ params }: { params: { uni: string } }) {
 	const { uni } = await params
@@ -17,9 +18,11 @@ export default async function UniversePage({ params }: { params: { uni: string }
 		thumbnails_ = thumbnails
 	}
 
-	const restart = useCallback(async () => {
-		const api = await authRequired()
-	}, [])
+	//const restart = async () => {
+	//	"use server"
+	//	console.log("restarting")
+	//	restartUniverse(uni)
+	//}
 
 	//console.log(places)
 	return (
@@ -34,24 +37,9 @@ export default async function UniversePage({ params }: { params: { uni: string }
 					<div>
 						<h1 className="text-2xl font-medium">{universe?.displayName}</h1>
 						<p className="text-gray-400">{universe?.description}</p>
-						{/*<Restart uni={uni} />*/}
+						<Restart uni={uni} />
 
-						<button className="text-white bg-green-700 px-4 py-2 rounded text-left" onClick={async () => {
-							"use server";
-							console.log("i", uni)
-							const api = await authRequired()
-
-							//restartUniverse(uni)
-							api.universe.restart(uni).then((res) => {
-								if (res.status === 200) {
-									console.log("Restarted universe")
-									//window.location.reload()
-								}
-							}).catch((err) => {
-								console.log("Error restarting universe", err)
-								//router.push(`/dashboard/group/${groupId}/universe/${uni}`)
-							})
-						}}>Restart Universe</button>
+						{/*<button className="text-white bg-green-700 px-4 py-2 rounded text-left" onClick={restart}>Restart Universe</button>*/}
 
 					</div>
 					<div>

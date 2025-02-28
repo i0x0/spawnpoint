@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
         hostname: '*.rbxcdn.com',
       }
     ]
-  }
+  },
 };
 
 export default withMDX(nextConfig);

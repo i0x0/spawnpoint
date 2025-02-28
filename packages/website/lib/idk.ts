@@ -1,3 +1,5 @@
+import { Action } from "./api_";
+
 export const joinWithAnd = (arr: string[]) => {
 	if (arr.length === 0) return '';
 	if (arr.length === 1) return String(arr[0]);
@@ -23,3 +25,17 @@ export const formatDateWithTimezone = (date: Date) => {
 };
 
 export const timestamp = () => Math.floor(Date.now() / 1000);
+
+export const restartUniverse = async (uni: string) => {
+	await fetch("/api/action", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			action: Action.RESTART_UNIVERSE,
+			universeId: uni
+		}),
+		cache: "no-store"
+	})
+}

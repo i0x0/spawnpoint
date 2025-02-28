@@ -3,15 +3,7 @@ import { getIronSession } from 'iron-session';
 import { cookies as c } from "next/headers";
 import ky from 'ky';
 //import { newAPI } from 'roblox-api/index';
-import safeAwait from 'safe-await';
-import { RobloxApi, TokenResponse } from '@/roblox-api';
-import { prisma } from './prisma';
-//import { Issuer, custom } from 'openid-client';
-import { redirect } from 'next/navigation';
-import { Action } from '@/pages/api/action';
-import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
-
-let cachedApi: RobloxApi | null = null;
+//import { NextApiRequest, NextApiResponse } from 'next';
 
 export type RobloxStatus = {
 	result: {
@@ -99,51 +91,4 @@ export const robloxStatusCheck = async () => {
 
 }
 
-export const authRequired = async () => {
-	//console.log("authRequired, cachedApi: ", cachedApi)
-	if (cachedApi) {
-		return cachedApi;
-	}
-	const [e, _cookies] = await safeAwait(c());
-	if (e) {
-		// idk
-	}
-	const [e_, session] = await safeAwait(cookies(_cookies as unknown as () => Promise<ReadonlyRequestCookies>))
-	if (e_) {
-		console.log("uhh")
-		// still dont know 
-	}
 
-	if (!session?.id) {
-		// def redirect
-		redirect('/')
-	}
-
-	const data = await prisma.user.findUnique({
-		where: {
-			id: session!.id! as unknown as string
-		}
-	})
-
-	cachedApi = new RobloxApi({
-		token: data!.data! as unknown as TokenResponse,
-		clientId: process.env.ROBLOX_ID!,
-		clientSecret: process.env.ROBLOX_SECRET!,
-		//id: data!.id
-	})
-	return cachedApi
-}
-
-export const restartUniverse = async (uni: string) => {
-	await fetch("/api/action", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-			action: Action.RESTART_UNIVERSE,
-			universeId: uni
-		}),
-		cache: "no-store"
-	})
-}

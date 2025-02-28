@@ -1,18 +1,21 @@
-import { COOKIE, SCOPES } from '@/const';
+import { cookiesAPI } from '@/api';
 import { prisma } from '@/prisma';
 import { robloxClient, TokenResponse } from '@/roblox-api';
-import { getIronSession } from 'iron-session';
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { Issuer, TokenSet, custom } from 'openid-client';
+import { TokenSet } from 'openid-client';
+import safeAwait from 'safe-await';
 
 export async function middleware(request: NextRequest) {
+	console.log("ffff", process.version)
 	// Check if the path starts with /dashboard
 	if (request.nextUrl.pathname.startsWith('/dashboard')) {
-		const s = await getIronSession<Record<string, unknown>>(request.cookies, { password: process.env.SECRET!, cookieName: COOKIE });
+		const [err, s] = await safeAwait(cookiesAPI(request, new Response()))
+		if (err) { }
+
 		prisma.user.findUnique({
 			where: {
-				id: s.id
+				id: s.id!
 			}
 		}).then(async (u) => {
 			if (!u) {

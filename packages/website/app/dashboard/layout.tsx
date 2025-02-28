@@ -1,6 +1,6 @@
 import safeAwait from 'safe-await';
 import AnimatedGrid from '@/components/AnimatedGrid';
-import { authRequired } from '@/api';
+import { authRequired } from '@/auth';
 //import { useRouter } from 'next/navigation';
 import DropdownMenu, { MenuItem } from '@/components/DropdownMenu';
 import Link from 'next/link';

@@ -85,7 +85,7 @@ export class RobloxApi {
 				console.log(error)
 				Promise.reject(error)
 			}, {
-			synchronous: false
+			synchronous: false,
 		}
 		);
 		this.ensureValidToken()
@@ -165,7 +165,8 @@ export class RobloxApi {
 								throw new RobloxApiError(`Request failed: ${endpoint}`);
 							}
 							console.log("invalid token trying again")
-							return await this.request<T>(method, endpoint, data, i + 1)
+							//await this.ensureValidToken()
+							//return await this.request<T>(method, endpoint, data, i + 1)
 						}
 					}
 					console.log("request url:", errors.config?.url)
@@ -179,7 +180,7 @@ export class RobloxApi {
 }
 
 export const issuer = await Issuer.discover(
-	"https://apis.roblox.com/oauth/.well-known/openid-configuration"
+	"https://apis.roblox.com/oauth/"
 );
 
 export const robloxClient = new issuer.Client({
