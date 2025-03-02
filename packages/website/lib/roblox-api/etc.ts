@@ -37,10 +37,10 @@ export type RobloxUser = {
 
 export default class Etc extends Prototype {
 	public async getGroup(id: string) {
-		return await this.root.request<RobloxGroup>("GET", `/cloud/v2/groups/${id}`)
+		return await this.root.request<RobloxGroup>("GET", `cloud/v2/groups/${id}`)
 	}
 
 	public async getUser(id: string) {
-		return await this.root.request<RobloxUser>("GET", `/cloud/v2/users/${id}`)
+		return await this.root.request<RobloxUser>("GET", `cloud/v2/users/${id}`)
 	}
 }

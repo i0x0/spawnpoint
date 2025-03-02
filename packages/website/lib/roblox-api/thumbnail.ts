@@ -14,6 +14,7 @@ export default class Thumbnail extends Prototype {
 	url: string = "https://thumbnails.roblox.com"
 	public async group(id: string) {
 		return await this.root.request<RobloxThumbnail>("GET", `${this.url}/v1/groups/icons`, {
+			prefixUrl: '',
 			params: {
 				format: "png",
 				size: "420x420",
@@ -24,27 +25,30 @@ export default class Thumbnail extends Prototype {
 
 	public async user(id: string) {
 		return await this.root.request<RobloxThumbnail>("GET", `${this.url}/v1/users/avatar-headshot`, {
-			params: {
+			prefixUrl: '',
+			searchParams: {
 				format: "png",
 				size: "420x420",
-				userIds: [id],
+				userIds: [id] as unknown as undefined,
 			}
 		})
 	}
 
 	public async universe(id: string) {
 		return await this.root.request<RobloxThumbnail>("GET", `${this.url}/v1/games/icons`, {
-			params: {
+			prefixUrl: '',
+			searchParams: {
 				format: "png",
 				size: "420x420",
-				universeIds: [id],
+				universeIds: [id] as unknown as undefined,
 			}
 		})
 	}
 
 	public async place(id: string[]) {
 		return await this.root.request<RobloxThumbnail>("GET", `${this.url}/v1/places/gameicons`, {
-			params: {
+			prefixUrl: '',
+			searchParams: {
 				format: "png",
 				size: "420x420",
 				placeIds: id,

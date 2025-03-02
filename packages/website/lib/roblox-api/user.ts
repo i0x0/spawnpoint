@@ -5,7 +5,7 @@ import { RobloxUserInfo } from "./types";
 export default class User extends Prototype {
 	public async self() {
 		const [error, userInfo] = await safeAwait(
-			this.root.request<RobloxUserInfo>("GET", "/oauth/v1/userinfo", {})
+			this.root.request<RobloxUserInfo>("GET", "oauth/v1/userinfo", {})
 		);
 
 		if (error) {

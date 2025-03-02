@@ -3,10 +3,11 @@ import Link from "next/link";
 import AnimatedGrid from "@/components/AnimatedGrid";
 import { cookies as c } from "next/headers";
 
-import { cookies, robloxStatusCheck } from "@/api";
+import { robloxStatusCheck } from "@/api";
 import GlowingDotWithTooltip from "@/components/Dot";
 import { formatDateWithTimezone, joinWithAnd } from "@/idk";
 import { HyperText } from "@/components/ui/hyper-text";
+import { cookies } from "@/cookies";
 
 export default async function Home() {
   const session = await cookies(await c());

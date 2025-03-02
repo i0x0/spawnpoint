@@ -1,6 +1,3 @@
-import { COOKIE } from './const';
-import { getIronSession } from 'iron-session';
-import { cookies as c } from "next/headers";
 import ky from 'ky';
 //import { newAPI } from 'roblox-api/index';
 //import { NextApiRequest, NextApiResponse } from 'next';
@@ -58,13 +55,7 @@ const ROBLOX_STATUS_URL = 'http://hostedstatus.com/1.0/status/59db90dbcdeb2f04da
 
 
 
-// @ts-expect-error uhh
 
-export const cookiesAPI = async (req, res) => await getIronSession<Record<string, unknown>>(req, res, { password: process.env.SECRET!, cookieName: COOKIE });
-
-// @ts-expect-error bc i said so
-
-export const cookies = async (x: typeof c) => await getIronSession<Record<string, unknown>>(x, { password: process.env.SECRET!, cookieName: COOKIE });
 
 export const robloxStatusCheck = async () => {
 	const status = await ky(ROBLOX_STATUS_URL).json<RobloxStatus>();

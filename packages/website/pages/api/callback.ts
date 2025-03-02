@@ -1,7 +1,5 @@
-import { cookiesAPI } from "@/api";
+import { cookiesAPI } from "@/cookies";
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import jwt from 'jsonwebtoken';
 import { robloxClient } from "@/roblox-api";
 import safeAwait from "safe-await"
@@ -52,29 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	try {
 		const userData = jwt.decode(tokenSet.id_token!) as UserJwtPayload
 		console.log(userData)
-		await prisma.user.upsert({
-			where: {
-				id: userData!.sub
-			},
-			create: {
-				id: userData!.sub,
-				data: tokenSet as Prisma.JsonObject,
-				account: {
-					create: {
-						teams: {
-							create: {
-								id: userData!.sub,
-								name: `${userData!.name}'s Team`,
-								type: "SINGLE",
-							}
-						}
-					}
-				}
-			},
-			update: {
-				data: tokenSet as Prisma.JsonObject,
-			}
-		})
+		session.data = tokenSet
 		session.id = userData.sub
 		await session.save()
 	} catch (e) {

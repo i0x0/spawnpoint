@@ -10,5 +10,8 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "patchedDependencies": {
+    "oidc-token-hash@5.1.0": "patches/oidc-token-hash@5.1.0.patch"
+  }
 }

@@ -1,12 +1,14 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import Auth from './auth';
 import User from './user';
-import prisma, { Prisma } from 'etc/prisma';
 import Universe from './universe';
 import Etc from './etc';
 import Thumbnail from './thumbnail'
 import { custom, Issuer, TokenSet } from 'openid-client';
 import { SCOPES } from '@/const';
+import ky, { KyInstance, Options } from 'ky'
+import { IronSession } from 'iron-session';
+import { cookies as c } from "next/headers";
+import { cookies } from '@/cookies';
 
 export type RobloxApiOptions = {
 	clientId: string;
@@ -30,8 +32,18 @@ class RobloxApiError extends Error {
 	}
 }
 
+async function checkIsServerAction() {
+	try {
+		// This will throw if executed on client
+		c();
+		return true;
+	} catch {
+		return false;
+	}
+}
+
 export class RobloxApi {
-	private axiosInstance: AxiosInstance;
+	public instance: KyInstance;
 	private _tokens: TokenSet | null = null;
 	public refreshPromise: Promise<TokenSet> | null = null;
 
@@ -41,15 +53,47 @@ export class RobloxApi {
 
 	public set tokens(value: TokenSet | null) {
 		this._tokens = value;
-		prisma.user.update({
-			where: { id: value?.claims().sub },
-			data: {
-				data: value as Prisma.JsonObject
+		try {
+			RobloxApi.saveC(value);
+		} catch (e) {
+			console.error("Error saving tokens:", e);
+		}
+	}
+
+	public static async saveC(d: unknown) {
+		// Handle both client and server contexts
+		if (typeof window === "undefined") {
+			// Server-side code
+			try {
+				// Use a different approach for server-side that doesn't require server actions
+				// Store in memory for now (this won't persist across requests)
+				RobloxApi._serverSideTokens = d;
+
+				// If we're in a context where we can access the response object
+				// (like in API routes), we could set cookies there
+				// This is just a fallback for when we can't use cookies()
+				console.log("Stored tokens in server memory (will not persist across requests)");
+			} catch (serverError) {
+				console.error("Server-side storage error:", serverError);
 			}
-		}).catch(console.error).then(() => {
-			//console.log("Tokens updated:", value?.access_token);
-			this._tokens = value;
-		});
+		} else {
+			// Client-side code
+			try {
+				// Use document.cookie for client-side storage
+				const tokenString = JSON.stringify(d);
+				document.cookie = `robloxTokens=${encodeURIComponent(tokenString)}; path=/; max-age=86400; SameSite=Strict`;
+			} catch (clientError) {
+				console.error("Client-side cookie save error:", clientError);
+			}
+		}
+	}
+
+	// Static property to store tokens on the server side
+	private static _serverSideTokens: unknown = null;
+
+	// Method to get the stored tokens
+	public static getServerSideTokens(): unknown {
+		return RobloxApi._serverSideTokens;
 	}
 
 	// subclasses
@@ -58,37 +102,37 @@ export class RobloxApi {
 	public universe: Universe
 	public etc: Etc
 	public thumbnail: Thumbnail
-	constructor(public options: { token: TokenResponse } & RobloxApiOptions) {
-		this.axiosInstance = axios.create({
-			baseURL: 'https://apis.roblox.com/',
-			//baseURL: options.baseUrl || 'https://api.roblox.com/v1',
-			timeout: 10000,
-		});
-
+	constructor(public options: { token: TokenResponse } & RobloxApiOptions, public session: IronSession<Record<string, unknown>>) {
 		// Add request interceptor for token management
+		this.tokens = new TokenSet(this.options.token)
+		this.ensureValidToken()
 		this.auth = new Auth(this)
 		this.user = new User(this)
 		this.universe = new Universe(this)
 		this.etc = new Etc(this)
 		this.thumbnail = new Thumbnail(this)
-		this.tokens = new TokenSet(this.options.token)
 		// prob old tokens
-		this.axiosInstance.interceptors.request.use(
-			(config) => {
-				this.ensureValidToken().then(() => {
-					config.headers.Authorization = `Bearer ${this.tokens?.access_token}`;
-				})
-				return config;
-			},
-			(error) => {
-				console.log("token interceptor error")
-				console.log(error)
-				Promise.reject(error)
-			}, {
-			synchronous: false,
-		}
-		);
-		this.ensureValidToken()
+		this.instance = ky.create({
+			prefixUrl: 'https://apis.roblox.com',
+			timeout: 10000,
+			hooks: {
+				beforeRequest: [
+					async (request) => {
+						await this.ensureValidToken()
+						request.headers.set('Authorization', `Bearer ${this.tokens?.access_token}`);
+					},
+					(request) => {
+						console.log(request.url)
+					}
+				],
+				beforeRetry: [
+					async () => {
+						await this.ensureValidToken()
+					}
+				]
+			}
+		})
+
 		//this.auth.refresh()
 	}
 
@@ -128,59 +172,32 @@ export class RobloxApi {
 	public async request<T>(
 		method: 'GET' | 'POST' | 'PUT' | 'DELETE',
 		endpoint: string,
-		data?: Partial<AxiosRequestConfig>,
-		i: number = 0
+		data?: Partial<Options>
 	): Promise<T> {
 		try {
-			const config: AxiosRequestConfig = {
-				method,
-				url: endpoint,
+			const response = await this.instance<T>(endpoint, {
+				method: method || data?.method,
 				...data
-			};
-
-			const response = await this.axiosInstance.request<T>(config);
-			return response.data;
+			});
+			//console.log("response", response)
+			return response.json<T>();
 		} catch (error) {
-			console.log("error3", error)
-			console.log(2)
-			const errors = error as Error | AxiosError;
-			if (!axios.isAxiosError(errors)) {
-				console.log(1)
-				console.log("cause", errors)
-				//console.log(errors.rq)
-				// do whatever you want with native error
-			} else {
-				console.log(3)
-				//console.log("response", errors.response)
-				console.log('status: ', errors.response?.statusText)
-				console.log(errors.response?.status)
-				//console.log(errors.request.)
-				if (errors.response?.data) {
-					if (errors.response.data.error) {
-						console.log("err_text: ", errors.response.data.error)
-						console.log("err_desc: ", errors.response.data.error_description)
-						if (errors.response?.status === 401 && errors.response.data.error === "invalid_token") {
-							if (i >= 5) {
-								console.log("invalid token, too many retries")
-								throw new RobloxApiError(`Request failed: ${endpoint}`);
-							}
-							console.log("invalid token trying again")
-							//await this.ensureValidToken()
-							//return await this.request<T>(method, endpoint, data, i + 1)
-						}
-					}
-					console.log("request url:", errors.config?.url)
-				}
-				console.log(errors.response)
+			//console.log("error", error)
+			if (error.name === 'HTTPError') {
+				const errorJson = await error.response.json();
+				console.log("kyErr", errorJson)
 			}
+
 			//console.log(error)
 			throw new RobloxApiError(`Request failed: ${endpoint}`);
 		}
 	}
 }
 
+Issuer.
+
 export const issuer = await Issuer.discover(
-	"https://apis.roblox.com/oauth/"
+	"https://apis.roblox.com/oauth/.well-known/openid-configuration"
 );
 
 export const robloxClient = new issuer.Client({
@@ -190,6 +207,7 @@ export const robloxClient = new issuer.Client({
 	response_types: ["code"],
 	scope: SCOPES,
 	id_token_signed_response_alg: "ES256",
+
 });
 
 robloxClient[custom.clock_tolerance] = 180;

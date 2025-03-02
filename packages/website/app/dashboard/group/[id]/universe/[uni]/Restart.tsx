@@ -1,22 +1,19 @@
 "use client";
 
-import { Action } from "@/api_";
+import ky from "ky";
 
 //import { restartUniverse } from "@/idk";
 
 const Restart = ({ uni }: { uni: string }) => {
 	const restart = async () => {
-		await fetch("/api/action", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
+		await ky.post('/api/action', {
+			json: {
 				action: "RESTART_UNIVERSE",
 				universeId: uni
-			}),
+			},
 			cache: "no-store"
 		})
+
 	}
 
 	console.log("restarting")

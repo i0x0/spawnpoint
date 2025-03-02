@@ -1,0 +1,27 @@
+diff --git a/LICENSE.md b/LICENSE.md
+old mode 100644
+new mode 100755
+diff --git a/README.md b/README.md
+old mode 100644
+new mode 100755
+diff --git a/lib/index.js b/lib/index.js
+old mode 100644
+new mode 100755
+diff --git a/lib/shake256.js b/lib/shake256.js
+old mode 100644
+new mode 100755
+index 0cd2438784142cb70c4093fc2929abd250cc949a..ec01c2c1416672dd5903128858b78f96afbf25c5
+--- a/lib/shake256.js
++++ b/lib/shake256.js
+@@ -1,7 +1 @@
+-const crypto = require('crypto');
+-
+-const [major, minor] = process.version.substring(1).split('.').map((x) => parseInt(x, 10));
+-const xofOutputLength = major > 12 || (major === 12 && minor >= 8);
+-const shake256 = xofOutputLength && crypto.getHashes().includes('shake256');
+-
+-module.exports = shake256;
++module.exports = true;
+diff --git a/package.json b/package.json
+old mode 100644
+new mode 100755

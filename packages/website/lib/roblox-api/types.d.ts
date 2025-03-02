@@ -28,3 +28,8 @@ export type RobloxAuthIntrospect = {
 	exp: number
 	iat: number
 }
+
+export const enum Action {
+	RESTART_UNIVERSE
+}
+

@@ -1,5 +1,3 @@
-import { Action } from "./api_";
-
 export const joinWithAnd = (arr: string[]) => {
 	if (arr.length === 0) return '';
 	if (arr.length === 1) return String(arr[0]);
@@ -33,7 +31,7 @@ export const restartUniverse = async (uni: string) => {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-			action: Action.RESTART_UNIVERSE,
+			action: "RESTART_UNIVERSE",
 			universeId: uni
 		}),
 		cache: "no-store"
