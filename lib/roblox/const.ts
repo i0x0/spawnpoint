@@ -6,6 +6,7 @@ export const SCOPES = [
 	"user.social:read",
 	"universe:write",
 	"legacy-universe:manage",
+	"universe-messaging-service:publish",
 	"legacy-team-collaboration:manage",
 	//"universe-datastores.control:list",
 	//"universe-datastores.objects:read",

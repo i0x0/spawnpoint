@@ -57,7 +57,10 @@ export type RobloxPlaces = {
 	}>
 }
 
-
+export interface PublishData {
+	topic: string
+	message: string
+}
 
 export default class Universe extends Prototype {
 	public url = "https://develop.roblox.com"
@@ -70,6 +73,12 @@ export default class Universe extends Prototype {
 	public async restart(id: string) {
 		return await this.root.request("POST", `cloud/v2/universes/${id}:restartServers`, {
 			json: {}
+		})
+	}
+
+	public async publish(id: string, data: PublishData) {
+		return await this.root.request("POST", `cloud/v2/universes/${id}:publishMessage`, {
+			json: data
 		})
 	}
 

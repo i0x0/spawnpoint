@@ -1,6 +1,6 @@
 import { cookiesAPI } from "@/lib/cookies";
 import { robloxConfig } from "@/lib/roblox/utils";
-import { getBaseUrl } from "@/lib/utils";
+import { createLogger, getBaseUrl } from "@/lib/utils";
 import { NextApiRequest, NextApiResponse } from "next";
 import { redirect } from "next/navigation";
 import * as client from 'openid-client';
@@ -12,6 +12,8 @@ interface OAuthError {
 	error_description: string;
 	cause?: any;
 }
+
+const log = createLogger('callback');
 
 
 export default async function handler(
@@ -31,7 +33,7 @@ export default async function handler(
 		delete session.nonce
 		delete session.state
 		let fresh = await client.refreshTokenGrant(robloxConfig, tokens.refresh_token!)
-		console.log("t", fresh)
+		log(fresh)
 		session.keys = fresh
 		await session.save()
 		res.redirect("/dashboard")

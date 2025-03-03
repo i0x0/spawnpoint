@@ -16,7 +16,7 @@ export default class Thumbnail extends Prototype {
 	public async group(id: string) {
 		return await this.root.request<RobloxThumbnail>("GET", `${this.url}/v1/groups/icons`, {
 			prefixUrl: '',
-			params: {
+			searchParams: {
 				format: "png",
 				size: "420x420",
 				groupIds: [id],
@@ -30,7 +30,7 @@ export default class Thumbnail extends Prototype {
 			searchParams: {
 				format: "png",
 				size: "420x420",
-				userIds: [id] as unknown as undefined,
+				userIds: [id],
 			}
 		})
 	}
@@ -41,7 +41,7 @@ export default class Thumbnail extends Prototype {
 			searchParams: {
 				format: "png",
 				size: "420x420",
-				universeIds: [id] as unknown as undefined,
+				universeIds: [id],
 			}
 		})
 	}

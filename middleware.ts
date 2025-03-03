@@ -23,14 +23,24 @@ export async function middleware(req: NextRequest) {
 			clientSecret: process.env.ROBLOX_SECRET!,
 			//id: data!.id
 		})
-		let decoded = jwt.decode(auth.tokens.access_token)
-		//console.log("Ff", auth.tokens)
-		if (isJwtValid(decoded!.exp)) {
+
+		let accessTokenCheck = await auth.auth.introspect(session.keys.access_token)
+
+		//let decoded = jwt.decode(auth.tokens.access_token)
+		//if (decoded === null) {
+		//	await session.destroy()
+		//	return NextResponse.redirect(new URL('/', req.url))
+		//}
+		////console.log("Ff", auth.tokens)
+		//if (isJwtValid(decoded!.exp)) {
+		if (accessTokenCheck.active) {
 			log("good token")
 			// access token still good
 			const soon = 6 * 60 * 1000; // 5 minutes in milliseconds
-			const isExpiringSoon = (new Date(decoded!.exp * 1000).getTime() - Date.now()) <= soon;
+			//const isExpiringSoon = (new Date(decoded!.exp * 1000).getTime() - Date.now()) <= soon;
+			const isExpiringSoon = (new Date(accessTokenCheck.exp * 1000).getTime() - Date.now()) <= soon;
 			if (isExpiringSoon) {
+				log("expiring")
 				const [err, newTokens] = await safeAwait(client.refreshTokenGrant(robloxConfig, session.keys.refresh_token))
 				if (err) {
 					console.error(err)

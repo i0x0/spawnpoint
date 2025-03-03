@@ -38,6 +38,7 @@ export type RobloxAuthIntrospect = {
 }
 
 export const enum Action {
-	RESTART_UNIVERSE
+	RESTART_UNIVERSE,
+	PUBLISH_UNIVERSE
 }
 

@@ -12,6 +12,10 @@ import Thumbnail from './thumbnail'
 import ky, { KyInstance, Options } from 'ky'
 import { TokenResponse } from './types';
 import Games from './games';
+import { createLogger } from '../utils';
+import DataStore from './datastore';
+
+const log = createLogger('roblox-api');
 
 export type RobloxApiOptions = {
 	clientId: string;
@@ -37,6 +41,7 @@ export class RobloxApi {
 	public etc: Etc
 	public thumbnail: Thumbnail
 	public games: Games
+	public datastore: DataStore
 
 	constructor(public options: { tokens: TokenResponse } & RobloxApiOptions) {
 		// Add request interceptor for token management
@@ -47,6 +52,7 @@ export class RobloxApi {
 		this.etc = new Etc(this)
 		this.thumbnail = new Thumbnail(this)
 		this.games = new Games(this)
+		this.datastore = new DataStore(this)
 		// prob old tokens
 		this.instance = ky.create({
 			prefixUrl: 'https://apis.roblox.com',
@@ -56,13 +62,15 @@ export class RobloxApi {
 				methods: ['get'],
 				//statusCodes: [413]
 			},
+			cache: 'force-cache',
 			hooks: {
 				beforeRequest: [
 					async (request) => {
 						request.headers.set('Authorization', `Bearer ${this.tokens?.access_token}`);
+						//request.headers.set('x-api-key', this.tokens.access_token)
 					},
 					(request) => {
-						console.log("[roblox-api] -> " + request.url)
+						log(request.url)
 					}
 				],
 				beforeRetry: [
@@ -94,10 +102,10 @@ export class RobloxApi {
 			//console.log("error", error)
 			if (error.name === 'HTTPError') {
 				const errorJson = await error.response.json();
-				console.log("kyErr", errorJson)
+				log("kyErr", errorJson)
 			}
 
-			//console.log(error)
+			console.log(error)
 			throw new RobloxApiError(`Request failed: ${endpoint}`);
 		}
 	}

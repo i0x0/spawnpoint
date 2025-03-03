@@ -54,9 +54,9 @@ export default function DropdownMenu({ items }: DropdownMenuProps) {
 									setSelectedItem(item);
 									setIsOpen(false);
 								}}
-								className="block w-full text-left px-4 py-2.5 text-gray-400 hover:text-white hover:bg-white/5"
+								className="block w-full text-left px-4 py-2.5 z-10 text-gray-400 hover:text-white hover:bg-white/5"
 							>
-								<div className="flex items-center gap-2">
+								<div className="flex items-center gap-2 z-10">
 									{item.icon && <span>{item.icon}</span>}
 									<span>{item.label}</span>
 								</div>
