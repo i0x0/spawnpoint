@@ -5,7 +5,7 @@ import safeAwait from "safe-await"
 import { auth } from "@/lib/roblox-api"
 
 
-export default async function GroupPage({ params }: { params: { id: string } }) {
+export default async function GroupPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params
 	const api = await auth()
 

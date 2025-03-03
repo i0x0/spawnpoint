@@ -5,7 +5,7 @@ import { auth } from "@/lib/roblox-api";
 import Actions from "./Actions";
 //import { useCallback } from "react";
 
-export default async function UniversePage({ params }: { params: { uni: string } }) {
+export default async function UniversePage({ params }: { params: Promise<{ uni: string }> }) {
 	const { uni } = await params
 	const api = await auth()
 	const [, universe] = await safeAwait(api.universe.get(uni))

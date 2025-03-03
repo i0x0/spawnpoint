@@ -7,7 +7,7 @@ export default async function BlogLayout({
 	params,
 }: {
 	children: React.ReactNode,
-	params: { id: string }
+	params: Promise<{ id: string }>
 }) {
 	const { id } = await params
 	const api = await auth()

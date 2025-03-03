@@ -41,18 +41,18 @@ export async function middleware(req: NextRequest) {
 			const isExpiringSoon = (new Date(accessTokenCheck.exp * 1000).getTime() - Date.now()) <= soon;
 			if (isExpiringSoon) {
 				log("expiring")
-				const [err, newTokens] = await safeAwait(client.refreshTokenGrant(robloxConfig, session.keys.refresh_token))
+				const [err, newTokens] = await safeAwait(client.refreshTokenGrant(robloxConfig, session.keys.refresh_token!))
 				if (err) {
 					console.error(err)
 				}
-				session.keys = newTokens
+				session.keys = newTokens!
 				session.refreshed = session.refreshed + 1 || 1
 				await session.save()
 			}
 		} else {
 			log("bad token")
 			log(session.keys)
-			let [err, refreshTokenCheck] = await safeAwait(auth.auth.introspect(session.keys.refresh_token))
+			let [err, refreshTokenCheck] = await safeAwait(auth.auth.introspect(session.keys.refresh_token!))
 			if (err) {
 				console.error(err)
 			}
@@ -60,11 +60,11 @@ export async function middleware(req: NextRequest) {
 			if (refreshTokenCheck!.active === true) {
 				// token still good
 				log("good refresh token")
-				const [err, newTokens] = await safeAwait(client.refreshTokenGrant(robloxConfig, session.keys.refresh_token))
+				const [err, newTokens] = await safeAwait(client.refreshTokenGrant(robloxConfig, session.keys.refresh_token!))
 				if (err) {
 					console.error(err)
 				}
-				session.keys = newTokens
+				session.keys = newTokens!
 				session.refreshed = session.refreshed + 1 || 1
 				await session.save()
 			} else {
@@ -76,7 +76,7 @@ export async function middleware(req: NextRequest) {
 					return NextResponse.redirect(new URL('/login', req.url))
 				} else {
 					log("here")
-					session.fff = "h"
+					//session.fff = "h"
 				}
 			}
 		}

@@ -7,6 +7,8 @@ import type { NextRequest, NextResponse } from "next/server";
 
 // @ts-expect-error too much type sanity
 import type { CookieSerializeOptions } from 'cookie';
+import type { TokenResponse } from "./roblox-api/types";
+import { TokenEndpointResponse, TokenEndpointResponseHelpers } from "openid-client";
 
 type ResponseCookie = CookieListItem & Pick<CookieSerializeOptions, "httpOnly" | "maxAge" | "priority">;
 
@@ -22,8 +24,17 @@ interface CookieStore {
 	};
 }
 
-export const cookiesAPI = async (req: NextApiRequest | NextRequest, res: NextApiResponse | NextResponse) => await getIronSession<Record<string, string | unknown>>(req, res, { password: process.env.SECRET!, cookieName: COOKIE });
+type SessionData = {
+	// Your data
+	keys?: TokenResponse | (TokenEndpointResponse & TokenEndpointResponseHelpers)
+	refreshed: number
+	nonce?: string
+	state?: string
+	//[key: string]: string | undefined
+}
+
+export const cookiesAPI = async (req: NextApiRequest | NextRequest, res: NextApiResponse | NextResponse) =>
+	await getIronSession<SessionData>(req, res, { password: process.env.SECRET!, cookieName: COOKIE });
 
 
-
-export const cookies = async (x: typeof c) => await getIronSession<Record<string, string | unknown>>(x as unknown as CookieStore, { password: process.env.SECRET!, cookieName: COOKIE });
+export const cookies = async (x: typeof c) => await getIronSession<SessionData>(x as unknown as CookieStore, { password: process.env.SECRET!, cookieName: COOKIE });
