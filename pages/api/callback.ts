@@ -33,6 +33,7 @@ export default async function handler(
 		let fresh = await client.refreshTokenGrant(robloxConfig, tokens.refresh_token!)
 		console.log("t", fresh)
 		session.keys = fresh
+		await session.save()
 		res.redirect("/dashboard")
 	} catch (e: any) {
 		//console.log("n", e.name)

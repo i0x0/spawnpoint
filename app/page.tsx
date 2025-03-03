@@ -11,6 +11,7 @@ import { cookies } from "@/lib/cookies";
 export default async function Home() {
   // @ts-expect-error its fine tbh
   const session = await cookies(await c());
+  //console.log(session)
   const status = await robloxStatusCheck()
   //console.log(status)
 

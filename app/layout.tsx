@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-//import { Geist, Geist_Mono } from "next/font/google";
+import { ToastContainer } from 'react-toastify';
+
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -17,6 +18,19 @@ export default function RootLayout({
       <body
         className={`antialiased`}
       >
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+          toastClassName="bg-[#1a1a1a] text-white"
+        />
         {children}
       </body>
     </html>

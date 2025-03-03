@@ -1,0 +1,201 @@
+diff --git a/distribution/core/Ky.d.ts b/distribution/core/Ky.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/core/Ky.js b/distribution/core/Ky.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/core/Ky.js.map b/distribution/core/Ky.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/core/constants.d.ts b/distribution/core/constants.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/core/constants.js b/distribution/core/constants.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/core/constants.js.map b/distribution/core/constants.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/errors/HTTPError.d.ts b/distribution/errors/HTTPError.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/errors/HTTPError.js b/distribution/errors/HTTPError.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/errors/HTTPError.js.map b/distribution/errors/HTTPError.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/errors/TimeoutError.d.ts b/distribution/errors/TimeoutError.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/errors/TimeoutError.js b/distribution/errors/TimeoutError.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/errors/TimeoutError.js.map b/distribution/errors/TimeoutError.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/index.d.ts b/distribution/index.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/index.js b/distribution/index.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/index.js.map b/distribution/index.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/ResponsePromise.d.ts b/distribution/types/ResponsePromise.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/ResponsePromise.js b/distribution/types/ResponsePromise.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/ResponsePromise.js.map b/distribution/types/ResponsePromise.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/common.d.ts b/distribution/types/common.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/common.js b/distribution/types/common.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/common.js.map b/distribution/types/common.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/hooks.d.ts b/distribution/types/hooks.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/hooks.js b/distribution/types/hooks.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/hooks.js.map b/distribution/types/hooks.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/ky.d.ts b/distribution/types/ky.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/ky.js b/distribution/types/ky.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/ky.js.map b/distribution/types/ky.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/options.d.ts b/distribution/types/options.d.ts
+old mode 100644
+new mode 100755
+index 0b9f3fbbe382cdd5f629836e92e8a21f0ab0ae84..ac6e7f63ee8ba023e74d4610e718d7eae33381f1
+--- a/distribution/types/options.d.ts
++++ b/distribution/types/options.d.ts
+@@ -2,7 +2,7 @@ import type { LiteralUnion, Required } from './common.js';
+ import type { Hooks } from './hooks.js';
+ import type { RetryOptions } from './retry.js';
+ export type SearchParamsInit = string | string[][] | Record<string, string> | URLSearchParams | undefined;
+-export type SearchParamsOption = SearchParamsInit | Record<string, string | number | boolean> | Array<Array<string | number | boolean>>;
++export type SearchParamsOption = SearchParamsInit | Record<string, string | number | boolean | string[]> | Array<Array<string | number | boolean>>;
+ export type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'head' | 'delete';
+ export type Input = string | URL | Request;
+ export type DownloadProgress = {
+diff --git a/distribution/types/options.js b/distribution/types/options.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/options.js.map b/distribution/types/options.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/request.d.ts b/distribution/types/request.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/request.js b/distribution/types/request.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/request.js.map b/distribution/types/request.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/response.d.ts b/distribution/types/response.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/response.js b/distribution/types/response.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/response.js.map b/distribution/types/response.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/retry.d.ts b/distribution/types/retry.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/retry.js b/distribution/types/retry.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/types/retry.js.map b/distribution/types/retry.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/delay.d.ts b/distribution/utils/delay.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/delay.js b/distribution/utils/delay.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/delay.js.map b/distribution/utils/delay.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/is.d.ts b/distribution/utils/is.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/is.js b/distribution/utils/is.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/is.js.map b/distribution/utils/is.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/merge.d.ts b/distribution/utils/merge.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/merge.js b/distribution/utils/merge.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/merge.js.map b/distribution/utils/merge.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/normalize.d.ts b/distribution/utils/normalize.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/normalize.js b/distribution/utils/normalize.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/normalize.js.map b/distribution/utils/normalize.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/options.d.ts b/distribution/utils/options.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/options.js b/distribution/utils/options.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/options.js.map b/distribution/utils/options.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/timeout.d.ts b/distribution/utils/timeout.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/timeout.js b/distribution/utils/timeout.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/timeout.js.map b/distribution/utils/timeout.js.map
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/types.d.ts b/distribution/utils/types.d.ts
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/types.js b/distribution/utils/types.js
+old mode 100644
+new mode 100755
+diff --git a/distribution/utils/types.js.map b/distribution/utils/types.js.map
+old mode 100644
+new mode 100755
+diff --git a/license b/license
+old mode 100644
+new mode 100755
+diff --git a/package.json b/package.json
+old mode 100644
+new mode 100755
+diff --git a/readme.md b/readme.md
+old mode 100644
+new mode 100755

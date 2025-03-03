@@ -1,11 +1,97 @@
+// actual hell hole
+
 import { NextRequest, NextResponse } from "next/server";
 import { cookiesAPI } from "./lib/cookies";
+import { RobloxApi } from "./lib/roblox-api";
+import * as client from 'openid-client';
+import { robloxConfig } from "./lib/roblox/utils";
+import jwt from "jsonwebtoken"
+import { createLogger, isJwtValid } from "./lib/utils";
+import safeAwait from "safe-await";
+import type { TokenResponse } from "./lib/roblox-api/types";
 
-export function middleware(req: NextRequest) {
+const log = createLogger('middleware');
+
+export async function middleware(req: NextRequest) {
 	const res = NextResponse.next()
-	const session = cookiesAPI(req, res)
+	const session = await cookiesAPI(req, res)
 
 	if (session.keys) {
-
+		let auth = new RobloxApi({
+			tokens: session!.keys! as unknown as TokenResponse,
+			clientId: process.env.ROBLOX_ID!,
+			clientSecret: process.env.ROBLOX_SECRET!,
+			//id: data!.id
+		})
+		let decoded = jwt.decode(auth.tokens.access_token)
+		//console.log("Ff", auth.tokens)
+		if (isJwtValid(decoded!.exp)) {
+			log("good token")
+			// access token still good
+			const soon = 6 * 60 * 1000; // 5 minutes in milliseconds
+			const isExpiringSoon = (new Date(decoded!.exp * 1000).getTime() - Date.now()) <= soon;
+			if (isExpiringSoon) {
+				const [err, newTokens] = await safeAwait(client.refreshTokenGrant(robloxConfig, session.keys.refresh_token))
+				if (err) {
+					console.error(err)
+				}
+				session.keys = newTokens
+				session.refreshed = session.refreshed + 1 || 1
+				await session.save()
+			}
+		} else {
+			log("bad token")
+			log(session.keys)
+			let [err, refreshTokenCheck] = await safeAwait(auth.auth.introspect(session.keys.refresh_token))
+			if (err) {
+				console.error(err)
+			}
+			log("r", refreshTokenCheck)
+			if (refreshTokenCheck!.active === true) {
+				// token still good
+				log("good refresh token")
+				const [err, newTokens] = await safeAwait(client.refreshTokenGrant(robloxConfig, session.keys.refresh_token))
+				if (err) {
+					console.error(err)
+				}
+				session.keys = newTokens
+				session.refreshed = session.refreshed + 1 || 1
+				await session.save()
+			} else {
+				// token bad
+				log("bad refresh token")
+				delete session.keys
+				await session.save()
+				if (req.nextUrl.pathname.startsWith('/dashboard')) {
+					return NextResponse.redirect(new URL('/login', req.url))
+				} else {
+					log("here")
+					session.fff = "h"
+				}
+			}
+		}
+		await session.save()
+	} else {
+		//await session.save()
+		return res
 	}
+	await session.save()
+	return res
+}
+
+//export async function middleware(req: NextRequest) {
+
+//}
+
+export const config = {
+	matcher: [
+		/*
+		 * Match all request paths except for the ones starting with:
+		 * - api (API routes)
+		 * - _next/static (static files)
+		 * - _next/image (image optimization files)
+		 * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+		 */
+		'/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+	],
 }

@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import ky from "ky";
 import { twMerge } from "tailwind-merge"
+import winston from 'winston';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -127,3 +128,17 @@ export const getBaseUrl = () => {
   return "http://localhost:3000";
 };
 
+
+export const isJwtValid = (exp: number, bufferSeconds: number = 0): boolean => {
+  if (!exp) return false;
+
+  // Current time in seconds since Unix epoch
+  const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+
+  // Check if the token is still valid, considering the buffer time
+  return exp > (currentTimeInSeconds - bufferSeconds);
+};
+
+export function createLogger(prefix: string) {
+  return (...args: any[]) => console.log(`[${prefix}]`, ...args);
+}
