@@ -91,14 +91,14 @@ export async function middleware(req: NextRequest) {
 
 //}
 
-export const config = {
-	matcher: [
-		/*
-		 * Match all request paths except for the ones starting with:
-		 * - _next (Next.js internal routes)
-		 * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-		 * - public (public assets)
-		 */
-		'/((?!_next|favicon.ico|sitemap.xml|robots.txt|public).*)',
-	],
-}
+//export const config = {
+//	matcher: [
+//		/*
+//		 * Match all request paths except for the ones starting with:
+//		 * - _next (Next.js internal routes)
+//		 * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+//		 * - public (public assets)
+//		 */
+//		'/((?!_next|favicon.ico|sitemap.xml|robots.txt|public).*)',
+//	],
+//}
