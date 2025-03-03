@@ -95,11 +95,10 @@ export const config = {
 	matcher: [
 		/*
 		 * Match all request paths except for the ones starting with:
-		 * - api (API routes)
-		 * - _next/static (static files)
-		 * - _next/image (image optimization files)
+		 * - _next (Next.js internal routes)
 		 * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+		 * - public (public assets)
 		 */
-		'/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+		'/((?!_next|favicon.ico|sitemap.xml|robots.txt|public).*)',
 	],
 }
