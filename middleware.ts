@@ -15,12 +15,12 @@ const log = createLogger("middleware");
 
 export async function middleware(req: NextRequest) {
   try {
-    console.log(1);
+    // console.log(1);
     const res = NextResponse.next();
-    console.log(2);
+    // console.log(2);
     const session = await cookiesAPI(req, res);
-    console.log(3);
-    log("session", session);
+    // console.log(3);
+    // log("session", session);
     if (session.keys) {
       let auth = new RobloxApi({
         tokens: session!.keys! as unknown as TokenResponse,
@@ -112,18 +112,14 @@ export async function middleware(req: NextRequest) {
   }
 }
 
-//export async function middleware(req: NextRequest) {
-
-//}
-
-//export const config = {
-//	matcher: [
-//		/*
-//		 * Match all request paths except for the ones starting with:
-//		 * - _next (Next.js internal routes)
-//		 * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-//		 * - public (public assets)
-//		 */
-//		'/((?!_next|favicon.ico|sitemap.xml|robots.txt|public).*)',
-//	],
-//}
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next (Next.js internal routes)
+     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     * - public (public assets)
+     */
+    "/((?!_next|favicon.ico|sitemap.xml|robots.txt|public).*)",
+  ],
+};
