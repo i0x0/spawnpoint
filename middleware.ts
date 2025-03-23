@@ -15,8 +15,11 @@ const log = createLogger("middleware");
 
 export async function middleware(req: NextRequest) {
   try {
+    console.log(1);
     const res = NextResponse.next();
+    console.log(2);
     const session = await cookiesAPI(req, res);
+    console.log(3);
     log("session", session);
     if (session.keys) {
       let auth = new RobloxApi({
