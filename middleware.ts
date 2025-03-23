@@ -50,7 +50,10 @@ export async function middleware(req: NextRequest) {
         if (isExpiringSoon) {
           log("expiring");
           const [err, newTokens] = await safeAwait(
-            client.refreshTokenGrant(robloxConfig, session.keys.refresh_token!),
+            client.refreshTokenGrant(
+              await robloxConfig(),
+              session.keys.refresh_token!,
+            ),
           );
           if (err) {
             console.error(err);
@@ -73,7 +76,10 @@ export async function middleware(req: NextRequest) {
           // token still good
           log("good refresh token");
           const [err, newTokens] = await safeAwait(
-            client.refreshTokenGrant(robloxConfig, session.keys.refresh_token!),
+            client.refreshTokenGrant(
+              await robloxConfig(),
+              session.keys.refresh_token!,
+            ),
           );
           if (err) {
             console.error(err);
